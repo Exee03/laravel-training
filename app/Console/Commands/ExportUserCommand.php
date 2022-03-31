@@ -5,6 +5,8 @@ namespace App\Console\Commands;
 use Illuminate\Console\Command;
 use App\Services\UserService;
 use Illuminate\Support\Facades\Storage;
+use Maatwebsite\Excel\Facades\Excel;
+use App\Exports\UsersExport;
 
 class ExportUserCommand extends Command
 {
@@ -13,7 +15,7 @@ class ExportUserCommand extends Command
      *
      * @var string
      */
-    protected $signature = 'pomen:export-user';
+    protected $signature = 'pomen:export-user {--extension=}';
 
     /**
      * The console command description.
@@ -37,14 +39,21 @@ class ExportUserCommand extends Command
      */
     public function handle()
     {
+        $extension = $this->option('extension');
+        $filename = 'users' . "." . $extension;
+
         $data = $this->userService->getAll();
-        $filename = "export-user.txt";
-        $text = "";
-        foreach ($data as $key => $row) {
-            $text .= $row["name"] . " ( " . $row["id"] . " )\n";
+
+        if ($extension == 'xlsx') {
+            Excel::download(new UsersExport($data->toArray()), $filename);
+        } else {
+            $text = "";
+            foreach ($data as $key => $row) {
+                $text .= $row["name"] . " ( " . $row["id"] . " )\n";
+            }
+            Storage::disk('public')->put($filename, $text);
         }
-        Storage::disk('local')->put($filename, $text);
-        echo "user successfully export";
+        $this->output->success("user successfully export");
         return 0;
     }
 }

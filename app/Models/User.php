@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
@@ -15,7 +16,7 @@ use App\Models\CarModel;
 
 class User extends Authenticatable
 {
-    use HasApiTokens, HasFactory, Notifiable;
+    use HasApiTokens, HasFactory, Notifiable, SoftDeletes;
 
     protected $table = "users";
     protected $primaryKey = "id";
@@ -53,13 +54,25 @@ class User extends Authenticatable
     ];
 
     // will append to all request
-    // protected $appends = [
-    //     "is_verified"
-    // ];
+    protected $appends = [
+        // "is_verified",
+        'address' // attribute
+    ];
 
+    // attribute. eg: get___Attribute()
     public function getIsVerifiedAttribute()
     {
         return !empty($this->email_verified_at);
+    }
+
+    // attribute with method -> it wi
+    public function getAddressAttribute()
+    {
+        try {
+            return $this->profile->full_address;
+        } catch (\Throwable $th) {
+            return '-';
+        }
     }
 
     public function profile()
@@ -92,5 +105,33 @@ class User extends Authenticatable
     public function car_models()
     {
         return $this->hasManyThrough(CarModel::class, Car::class, 'user_id', 'id', 'id', 'model_id');
+    }
+
+    // scope
+    public function scopeUserVerified($query)
+    {
+        $query->whereNotNull('email_verified_at');
+    }
+
+    // scope with input
+    // public function scopeExample($query,$input)
+    // {
+    //     # code...
+    // }
+
+    // channing 
+    public function customHidden()
+    {
+        // must return $this
+        // $this->makeHidden(['profile']);
+        // return $this;
+        return $this->makeHidden(['profile']);
+    }
+
+    public function scopeHasBrand($query, $brand_name)
+    {
+        $query->whereHas('cars.model', function ($q) use ($brand_name) {
+            $q->where('brand', $brand_name);
+        });
     }
 }

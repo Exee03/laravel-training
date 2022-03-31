@@ -20,6 +20,7 @@ return new class extends Migration
             $table->text('details');
             $table->dateTime('maintenance_at');
             $table->timestamps();
+            $table->softDeletes();
         });
     }
 

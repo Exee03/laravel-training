@@ -19,6 +19,7 @@ return new class extends Migration
             $table->unsignedBigInteger('car_id')->nullable()->unique();
             $table->string('name');
             $table->timestamps();
+            $table->softDeletes();
         });
     }
 

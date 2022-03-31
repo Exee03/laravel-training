@@ -19,6 +19,7 @@ return new class extends Migration
             $table->unsignedBigInteger('model_id')->nullable();
             $table->string('no_plate')->unique();
             $table->timestamps();
+            $table->softDeletes();
         });
     }
 

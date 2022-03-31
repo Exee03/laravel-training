@@ -4,11 +4,12 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
 use App\Models\Car;
 
 class Maintenance extends Model
 {
-    use HasFactory;
+    use HasFactory, SoftDeletes;
 
     protected $table = "maintenances";
     protected $primaryKey = "id";
@@ -35,6 +36,7 @@ class Maintenance extends Model
         'mileage' => 'string',
         'details' => 'string',
         'maintenance_at' => 'datetime',
+        // 'maintenance_at' => 'datetime:d/m/Y', //format date using cast
     ];
 
     public function cars()
@@ -45,5 +47,11 @@ class Maintenance extends Model
     public function car()
     {
         return $this->belongsTo(Car::class, 'car_id', 'id');
+    }
+
+    //format date using attribute
+    public function getMaintenanceAtAttribute($value)
+    {
+        return \Carbon\Carbon::parse($value)->format('d/m/Y');
     }
 }

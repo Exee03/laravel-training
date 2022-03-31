@@ -35,4 +35,34 @@ class ProfileController extends Controller
             "data" => $this->profileService->getAll(),
         ]);
     }
+
+    public function store(Request $request)
+    {
+        return Response::json([
+            "success" => true,
+            "code" => 200,
+            "message" => "Sucessfully Create",
+            "data" => $this->profileService->create($request),
+        ]);
+    }
+
+    public function storeBulk(Request $request)
+    {
+        return Response::json([
+            "success" => true,
+            "code" => 200,
+            "message" => "Sucessfully Create",
+            "data" => $this->profileService->storeBulk($request),
+        ]);
+    }
+
+    public function save(Request $request)
+    {
+        return Response::json([
+            "success" => true,
+            "code" => 200,
+            "message" => "Sucessfully Create",
+            "data" => $this->profileService->save($request),
+        ]);
+    }
 }

@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
 use App\Models\User;
 use App\Models\CarModel;
 use App\Models\Maintenance;
@@ -12,7 +13,7 @@ use App\Models\Profile;
 
 class Car extends Model
 {
-    use  HasFactory;
+    use  HasFactory, SoftDeletes;
 
     protected $table = "cars";
     protected $primaryKey = "id";
@@ -61,6 +62,6 @@ class Car extends Model
 
     public function profile()
     {
-        return $this->hasOneThrough(Profile::class, User::class, 'id', 'user_id', 'user_id','id');
+        return $this->hasOneThrough(Profile::class, User::class, 'id', 'user_id', 'user_id', 'id');
     }
 }

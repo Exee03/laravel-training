@@ -18,6 +18,7 @@ return new class extends Migration
             $table->unsignedBigInteger('user_id')->unique();
             $table->text('full_address')->nullable();
             $table->timestamps();
+            $table->softDeletes();
         });
     }
 
